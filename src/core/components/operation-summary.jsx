@@ -52,14 +52,12 @@ export default class OperationSummary extends PureComponent {
 
     const AuthorizeOperationBtn = getComponent("authorizeOperationBtn")
     const OperationSummaryMethod = getComponent("OperationSummaryMethod")
-    const OperationSummaryPath = getComponent("OperationSummaryPath")
     const JumpToPath = getComponent("JumpToPath", true)
 
     return (
 
       <div className={`opblock-summary opblock-summary-${method}`} onClick={toggleShown} >
         <OperationSummaryMethod method={method} />
-        <OperationSummaryPath getComponent={getComponent} operationProps={operationProps} specPath={specPath} />
 
         {!showSummary ? null :
           <div className="opblock-summary-description">

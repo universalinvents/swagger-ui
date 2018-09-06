@@ -45,29 +45,15 @@ export default class ModelExample extends React.Component {
     const ModelWrapper = getComponent("ModelWrapper")
 
     return <div>
-      <ul className="tab">
-        <li className={ "tabitem" + ( this.state.activeTab === "example" ? " active" : "") }>
-          <a className="tablinks" data-name="example" onClick={ this.activeTab }>{isExecute ? "Edit Value" : "Example Value"}</a>
-        </li>
-        { schema ? <li className={ "tabitem" + ( this.state.activeTab === "model" ? " active" : "") }>
-          <a className={ "tablinks" + ( isExecute ? " inactive" : "" )} data-name="model" onClick={ this.activeTab }>Model</a>
-        </li> : null }
-      </ul>
-      <div>
         {
-          this.state.activeTab === "example" && example
+          isExecute ? example
+            : <ModelWrapper schema={ schema }
+               getComponent={ getComponent }
+               getConfigs={ getConfigs }
+               specSelectors={ specSelectors }
+               expandDepth={ defaultModelExpandDepth }
+               specPath={specPath} />
         }
-        {
-          this.state.activeTab === "model" && <ModelWrapper schema={ schema }
-                                                     getComponent={ getComponent }
-                                                     getConfigs={ getConfigs }
-                                                     specSelectors={ specSelectors }
-                                                     expandDepth={ defaultModelExpandDepth }
-                                                     specPath={specPath} />
-
-
-        }
-      </div>
     </div>
   }
 
