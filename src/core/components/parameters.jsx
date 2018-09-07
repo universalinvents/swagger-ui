@@ -89,8 +89,11 @@ export default class Parameters extends Component {
                 <div className="opblock-section-header">
                     { allowTryItOut ? (
                         <div>
-                            <button className="btn" onClick={onCancelClick}>Definition</button>
-                            <button className="btn" onClick={onTryoutClick}>Try it Out</button>
+                            {
+                                isExecute
+                                    ? <button className="btn cancel" onClick={onCancelClick}>Cancel</button>
+                                    : <button className="btn try-it-tout" onClick={onTryoutClick}>Try it Out</button>
+                            }
                         </div>) : null }
                     </div>
                     { !parameters.count() ? <div className="opblock-description-wrapper"><p>No parameters</p></div> :
