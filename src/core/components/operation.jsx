@@ -88,6 +88,7 @@ export default class Operation extends PureComponent {
         let operationScheme = specSelectors.operationScheme(path, method)
         let isShownKey = ["operations", tag, operationId]
         let extensions = getExtensions(operation)
+        let isOpened = layoutSelectors.isExpanded(operationId);
 
         const Responses = getComponent("responses")
         const Parameters = getComponent( "parameters" )
@@ -117,8 +118,8 @@ export default class Operation extends PureComponent {
 
         return (
             <div className={deprecated ? "opblock opblock-deprecated" : isShown ? `opblock opblock-${method} is-open` : `opblock opblock-${method}`} id={createDeepLinkPath(isShownKey.join("-"))} >
-                <OperationSummary operationProps={operationProps} toggleShown={toggleShown} getComponent={getComponent} authActions={authActions} authSelectors={authSelectors} specPath={specPath} />
-                    <Collapse isOpened={layoutSelectors.isExpanded(operationId)}>
+                <OperationSummary operationProps={operationProps} toggleShown={toggleShown} getComponent={getComponent} authActions={authActions} authSelectors={authSelectors} specPath={specPath} isOpened={isOpened} />
+                    <Collapse isOpened={isOpened}>
                         <div className="opblock-body">
                             <h4>{tag}</h4>
                             <OperationSummaryMethod method={method} />
