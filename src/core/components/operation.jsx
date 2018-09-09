@@ -88,7 +88,6 @@ export default class Operation extends PureComponent {
         let operationScheme = specSelectors.operationScheme(path, method)
         let isShownKey = ["operations", tag, operationId]
         let extensions = getExtensions(operation)
-        let isOpened = layoutSelectors.isExpanded(operationId);
 
         const Responses = getComponent("responses")
         const Parameters = getComponent( "parameters" )
@@ -115,6 +114,8 @@ export default class Operation extends PureComponent {
         let onChangeKey = [ path, method ] // Used to add values to _this_ operation ( indexed by path and method )
 
         let { layoutSelectors } = this.props;
+
+        let isOpened = layoutSelectors.isExpanded(operationId);
 
         return (
             <div className={deprecated ? "opblock opblock-deprecated" : isShown ? `opblock opblock-${method} is-open` : `opblock opblock-${method}`} id={createDeepLinkPath(isShownKey.join("-"))} >
