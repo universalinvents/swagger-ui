@@ -38,10 +38,10 @@ fi
 if [[ -f $SWAGGER_JSON ]]; then
   cp -s $SWAGGER_JSON $NGINX_ROOT
   REL_PATH="./$(basename $SWAGGER_JSON)"
-  sed -i "s|https://api.universalinvents.com/dev/api/swagger.json|$REL_PATH|g" $INDEX_FILE
+  sed -i "s|https://petstore.swagger.io/v2/swagger.json|$REL_PATH|g" $INDEX_FILE
   sed -i "s|http://example.com/api|$REL_PATH|g" $INDEX_FILE
 else
-  sed -i "s|https://api.universalinvents.com/dev/api/swagger.json|$API_URL|g" $INDEX_FILE
+  sed -i "s|https://petstore.swagger.io/v2/swagger.json|$API_URL|g" $INDEX_FILE
   sed -i "s|http://example.com/api|$API_URL|g" $INDEX_FILE
 fi
 

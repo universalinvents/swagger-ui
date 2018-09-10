@@ -44,7 +44,7 @@ you could do something like this:
 var SwaggerUIBundle = require('swagger-ui-dist').SwaggerUIBundle
 
 const ui = SwaggerUIBundle({
-    url: "https://api.universalinvents.com/dev/api/swagger.json",
+    url: "https://petstore.swagger.io/v2/swagger.json",
     dom_id: '#swagger-ui',
     presets: [
       SwaggerUIBundle.presets.apis,
