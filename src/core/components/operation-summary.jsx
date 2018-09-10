@@ -14,6 +14,7 @@ export default class OperationSummary extends PureComponent {
     getConfigs: PropTypes.func.isRequired,
     authActions: PropTypes.object,
     authSelectors: PropTypes.object,
+    isOpened: PropTypes.bool.isRequired
   }
 
   static defaultProps = {
@@ -31,6 +32,7 @@ export default class OperationSummary extends PureComponent {
       authSelectors,
       operationProps,
       specPath,
+      isOpened
     } = this.props
 
     let {
@@ -52,14 +54,12 @@ export default class OperationSummary extends PureComponent {
 
     const AuthorizeOperationBtn = getComponent("authorizeOperationBtn")
     const OperationSummaryMethod = getComponent("OperationSummaryMethod")
-    const OperationSummaryPath = getComponent("OperationSummaryPath")
     const JumpToPath = getComponent("JumpToPath", true)
 
     return (
 
-      <div className={`opblock-summary opblock-summary-${method}`} onClick={toggleShown} >
+      <div className={isOpened ? `opblock-summary opblock-summary-${method} active` : `opblock-summary opblock-summary-${method}`} onClick={toggleShown} >
         <OperationSummaryMethod method={method} />
-        <OperationSummaryPath getComponent={getComponent} operationProps={operationProps} specPath={specPath} />
 
         {!showSummary ? null :
           <div className="opblock-summary-description">

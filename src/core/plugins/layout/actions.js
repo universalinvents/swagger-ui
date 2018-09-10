@@ -4,6 +4,7 @@ export const UPDATE_LAYOUT = "layout_update_layout"
 export const UPDATE_FILTER = "layout_update_filter"
 export const UPDATE_MODE = "layout_update_mode"
 export const SHOW = "layout_show"
+export const EXPAND = "layout_expand"
 
 // export const ONLY_SHOW = "layout_only_show"
 
@@ -26,6 +27,14 @@ export function show(thing, shown=true) {
   return {
     type: SHOW,
     payload: {thing, shown}
+  }
+}
+
+export function expand(thing) {
+  thing = normalizeArray(thing)
+  return {
+    type: EXPAND,
+    payload: {thing}
   }
 }
 

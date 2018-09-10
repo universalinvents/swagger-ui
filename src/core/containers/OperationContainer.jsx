@@ -57,7 +57,7 @@ export default class OperationContainer extends PureComponent {
   mapStateToProps(nextState, props) {
     const { op, layoutSelectors, getConfigs } = props
     const { docExpansion, deepLinking, displayOperationId, displayRequestDuration, supportedSubmitMethods } = getConfigs()
-    const showSummary = layoutSelectors.showSummary()
+    const showSummary = layoutSelectors.showSummary(displayOperationId);
     const operationId = op.getIn(["operation", "__originalOperationId"]) || op.getIn(["operation", "operationId"]) || opId(op.get("operation"), props.path, props.method) || op.get("id")
     const isShownKey = ["operations", props.tag, operationId]
     const isDeepLinkingEnabled = deepLinking && deepLinking !== "false"
@@ -110,16 +110,20 @@ export default class OperationContainer extends PureComponent {
       // transitioning from collapsed to expanded
       this.requestResolvedSubtree()
     }
-    layoutActions.show(["operations", tag, operationId], !isShown)
+    // layoutActions.show(["operations", tag, operationId], !isShown)
+    layoutActions.expand(operationId);
   }
 
   onCancelClick=() => {
-    this.setState({tryItOutEnabled: !this.state.tryItOutEnabled})
+    this.setState({tryItOutEnabled: false})
+    let { specActions, path, method } = this.props
+    specActions.clearResponse( path, method )
+    specActions.clearRequest( path, method )
   }
 
   onTryoutClick =() => {
     let { specActions, path, method } = this.props
-    this.setState({tryItOutEnabled: !this.state.tryItOutEnabled})
+    this.setState({tryItOutEnabled: true })
     specActions.clearValidateParams([path, method])
   }
 

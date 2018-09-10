@@ -8,116 +8,152 @@ const eachMap = (iterable, fn) => iterable.valueSeq().filter(Im.Map.isMap).map(f
 
 export default class Parameters extends Component {
 
-  static propTypes = {
-    parameters: ImPropTypes.list.isRequired,
-    specActions: PropTypes.object.isRequired,
-    getComponent: PropTypes.func.isRequired,
-    specSelectors: PropTypes.object.isRequired,
-    fn: PropTypes.object.isRequired,
-    tryItOutEnabled: PropTypes.bool,
-    allowTryItOut: PropTypes.bool,
-    onTryoutClick: PropTypes.func,
-    onCancelClick: PropTypes.func,
-    onChangeKey: PropTypes.array,
-    pathMethod: PropTypes.array.isRequired,
-    getConfigs: PropTypes.func.isRequired,
-    specPath: ImPropTypes.list.isRequired,
-  }
+    static propTypes = {
+        parameters: ImPropTypes.list.isRequired,
+        specActions: PropTypes.object.isRequired,
+        getComponent: PropTypes.func.isRequired,
+        specSelectors: PropTypes.object.isRequired,
+        fn: PropTypes.object.isRequired,
+        tryItOutEnabled: PropTypes.bool,
+        allowTryItOut: PropTypes.bool,
+        onTryoutClick: PropTypes.func,
+        onCancelClick: PropTypes.func,
+        onChangeKey: PropTypes.array,
+        pathMethod: PropTypes.array.isRequired,
+        getConfigs: PropTypes.func.isRequired,
+        specPath: ImPropTypes.list.isRequired,
+    }
 
 
-  static defaultProps = {
-    onTryoutClick: Function.prototype,
-    onCancelClick: Function.prototype,
-    tryItOutEnabled: false,
-    allowTryItOut: true,
-    onChangeKey: [],
-    specPath: [],
-  }
+    static defaultProps = {
+        onTryoutClick: Function.prototype,
+        onCancelClick: Function.prototype,
+        tryItOutEnabled: false,
+        allowTryItOut: true,
+        onChangeKey: [],
+        specPath: [],
+    }
 
-  onChange = ( param, value, isXml ) => {
-    let {
-      specActions: { changeParamByIdentity },
-      onChangeKey,
-    } = this.props
+    onChange = ( param, value, isXml ) => {
+        let {
+            specActions: { changeParamByIdentity },
+            onChangeKey,
+        } = this.props
 
-    changeParamByIdentity(onChangeKey, param, value, isXml)
-  }
+        changeParamByIdentity(onChangeKey, param, value, isXml)
+    }
 
-  onChangeConsumesWrapper = ( val ) => {
-    let {
-      specActions: { changeConsumesValue },
-      onChangeKey
-    } = this.props
+    onChangeConsumesWrapper = ( val ) => {
+        let {
+            specActions: { changeConsumesValue },
+            onChangeKey
+        } = this.props
 
-    changeConsumesValue(onChangeKey, val)
-  }
+        changeConsumesValue(onChangeKey, val)
+    }
 
-  render(){
+    render(){
 
-    let {
-      onTryoutClick,
-      onCancelClick,
-      parameters,
-      allowTryItOut,
-      tryItOutEnabled,
-      specPath,
+        let {
+            onTryoutClick,
+            onCancelClick,
+            parameters,
+            allowTryItOut,
+            tryItOutEnabled,
+            specPath,
 
-      fn,
-      getComponent,
-      getConfigs,
-      specSelectors, 
-      specActions,
-      pathMethod
-    } = this.props
+            fn,
+            getComponent,
+            getConfigs,
+            specSelectors,
+            specActions,
+            pathMethod
+        } = this.props
 
-    const ParameterRow = getComponent("parameterRow")
-    const TryItOutButton = getComponent("TryItOutButton")
+        const ParameterRow = getComponent("parameterRow")
+        const TryItOutButton = getComponent("TryItOutButton")
 
-    const isExecute = tryItOutEnabled && allowTryItOut
+        const isExecute = tryItOutEnabled && allowTryItOut
 
-    return (
-      <div className="opblock-section">
-        <div className="opblock-section-header">
-          <div className="tab-header">
-            <h4 className="opblock-title">Parameters</h4>
-          </div>
-            { allowTryItOut ? (
-              <TryItOutButton enabled={ tryItOutEnabled } onCancelClick={ onCancelClick } onTryoutClick={ onTryoutClick } />
-            ) : null }
-        </div>
-        { !parameters.count() ? <div className="opblock-description-wrapper"><p>No parameters</p></div> :
-          <div className="table-container">
-            <table className="parameters">
-              <thead>
-                <tr>
-                  <th className="col col_header parameters-col_name">Name</th>
-                  <th className="col col_header parameters-col_description">Description</th>
-                </tr>
-              </thead>
-              <tbody>
-                {
-                  eachMap(parameters, (parameter, i) => (
-                    <ParameterRow
-                      fn={ fn }
-                      specPath={specPath.push(i.toString())}
-                      getComponent={ getComponent }
-                      getConfigs={ getConfigs }
-                      rawParam={ parameter }
-                      param={ specSelectors.parameterWithMetaByIdentity(pathMethod, parameter) }
-                      key={ `${parameter.get( "in" )}.${parameter.get("name")}` }
-                      onChange={ this.onChange }
-                      onChangeConsumes={this.onChangeConsumesWrapper}
-                      specSelectors={ specSelectors }
-                      specActions={specActions}
-                      pathMethod={ pathMethod }
-                      isExecute={ isExecute }/>
-                  )).toArray()
-                }
-              </tbody>
-            </table>
-          </div>
+        // Group all the parameters by param type
+        let paramTypes = {};
+        parameters.forEach((parameter,i) => {
+            let param = specSelectors.parameterWithMetaByIdentity(pathMethod, parameter);
+            let type = param.get('in');
+            if (!paramTypes[type]) { paramTypes[type] = []; }
+            paramTypes[type].push({ parameter, param, i });
+        });
+
+        return (
+            <div className="opblock-section">
+                <div className="opblock-section-header">
+                    { allowTryItOut ? (
+                        <div>
+                            <button className={!isExecute ? "btn active" : "btn"} onClick={onCancelClick}>Endpoint Definition</button>
+                            <button className={isExecute ? "btn active" : "btn"} onClick={onTryoutClick}>Try it Out!</button>
+                        </div>) : null }
+                    </div>
+                    { !parameters.count() ? <div className="opblock-description-wrapper"><p>No parameters</p></div> :
+                        (() => {
+                            let result = [];
+                            for (let type in paramTypes) {
+                                let params = paramTypes[type];
+                                let paramResult = [];
+                                params.forEach(({ parameter, param, i }, j) => {
+                                    paramResult.push(
+                                        <div className="table-container" key={j}>
+                                            <table className="parameters">
+                                                <thead>
+                                                    <tr>
+                                                        <th className="col col_header parameters-col_name">Name</th>
+                                                        <th className="col col_header parameters-col_description">Description</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    <ParameterRow
+                                                        fn={ fn }
+                                                        specPath={specPath.push(i.toString())}
+                                                        getComponent={ getComponent }
+                                                        getConfigs={ getConfigs }
+                                                        rawParam={ parameter }
+                                                        param={ specSelectors.parameterWithMetaByIdentity(pathMethod, parameter) }
+                                                        key={ `${parameter.get( "in" )}.${parameter.get("name")}` }
+                                                        onChange={ this.onChange }
+                                                        onChangeConsumes={this.onChangeConsumesWrapper}
+                                                        specSelectors={ specSelectors }
+                                                        specActions={specActions}
+                                                        pathMethod={ pathMethod }
+                                                        isExecute={ isExecute }/>
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    );
+                                })
+                                result.push(<div key={type}>
+                                    <h3>
+                                        {(() => {
+                                            switch(type) {
+                                                case 'header':
+                                                    return 'Header Params';
+                                                case 'query':
+                                                    return 'Query Params';
+                                                case 'path':
+                                                    return 'Path Params';
+                                                case 'body':
+                                                    return 'Request Body';
+                                                default:
+                                                    return type;
+                                            }
+                                        })()}
+                                    </h3>
+                                    {paramResult}
+                                </div>);
+                            }
+
+                            return result;
+                        })()
+                    }
+                </div>
+            )
         }
-      </div>
-    )
-  }
-}
+    }

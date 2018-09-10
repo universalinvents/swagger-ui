@@ -22,3 +22,7 @@ export const showSummary = createSelector(
   state,
   state => !isShown(state, "editor")
 )
+
+export const isExpanded = (state, thing) => {
+    return thing == state.get('selected');
+}
