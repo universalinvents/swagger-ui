@@ -101,32 +101,22 @@ export default class Parameters extends Component {
                                 let paramResult = [];
                                 params.forEach(({ parameter, param, i }, j) => {
                                     paramResult.push(
-                                        <div className="table-container" key={j}>
-                                            <table className="parameters">
-                                                <thead>
-                                                    <tr>
-                                                        <th className="col col_header parameters-col_name">Name</th>
-                                                        <th className="col col_header parameters-col_description">Description</th>
-                                                    </tr>
-                                                </thead>
-                                                <tbody>
-                                                    <ParameterRow
-                                                        fn={ fn }
-                                                        specPath={specPath.push(i.toString())}
-                                                        getComponent={ getComponent }
-                                                        getConfigs={ getConfigs }
-                                                        rawParam={ parameter }
-                                                        param={ specSelectors.parameterWithMetaByIdentity(pathMethod, parameter) }
-                                                        key={ `${parameter.get( "in" )}.${parameter.get("name")}` }
-                                                        onChange={ this.onChange }
-                                                        onChangeConsumes={this.onChangeConsumesWrapper}
-                                                        specSelectors={ specSelectors }
-                                                        specActions={specActions}
-                                                        pathMethod={ pathMethod }
-                                                        isExecute={ isExecute }/>
-                                                </tbody>
-                                            </table>
-                                        </div>
+                                        <ParameterRow
+                                            key={j}
+                                            fn={ fn }
+                                            specPath={specPath.push(i.toString())}
+                                            getComponent={ getComponent }
+                                            getConfigs={ getConfigs }
+                                            rawParam={ parameter }
+                                            param={ specSelectors.parameterWithMetaByIdentity(pathMethod, parameter) }
+                                            key={ `${parameter.get( "in" )}.${parameter.get("name")}` }
+                                            onChange={ this.onChange }
+                                            onChangeConsumes={this.onChangeConsumesWrapper}
+                                            specSelectors={ specSelectors }
+                                            specActions={specActions}
+                                            pathMethod={ pathMethod }
+                                            isExecute={ isExecute }
+                                        />
                                     );
                                 })
                                 result.push(<div key={type}>
@@ -146,7 +136,19 @@ export default class Parameters extends Component {
                                             }
                                         })()}
                                     </h3>
-                                    {paramResult}
+                                    <div className="table-container">
+                                        <table className="parameters">
+                                            <thead>
+                                                <tr>
+                                                    <th className="col col_header parameters-col_name">Name</th>
+                                                    <th className="col col_header parameters-col_description">Description</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                {paramResult}
+                                            </tbody>
+                                        </table>
+                                    </div>
                                 </div>);
                             }
 
